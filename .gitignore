@@ -171,3 +171,5 @@ gradle-app.setting
 
 .vscode
 application-dev.yaml
+.env
+.idea
