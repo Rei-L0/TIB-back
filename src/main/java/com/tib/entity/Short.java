@@ -76,4 +76,8 @@ public class Short {
   @Column(nullable = false, length = 20)
   @ColumnDefault("'READY'")
   private String status = "READY";
+
+  public void increaseReadCount() {
+    this.readcount++;
+  }
 }
