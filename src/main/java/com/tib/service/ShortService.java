@@ -1,7 +1,11 @@
 package com.tib.service;
 
+import com.tib.dto.ShortPlayEventReq;
+import com.tib.dto.ShortPlayEventRes;
 import com.tib.dto.ShortViewsRes;
 import com.tib.entity.Short;
+import com.tib.entity.ShortPlayEvent;
+import com.tib.repository.ShortPlayEventRepository;
 import com.tib.repository.ShortRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ShortService {
 
   private final ShortRepository shortRepository;
+  private final ShortPlayEventRepository shortPlayEventRepository;
 
   @Transactional
   public ShortViewsRes increaseViewCount(Long id) {
@@ -24,6 +29,29 @@ public class ShortService {
     return ShortViewsRes.builder()
         .id(shorts.getId())
         .readcount(shorts.getReadcount())
+        .build();
+  }
+
+  @Transactional
+  public ShortPlayEventRes createPlayEvent(Long shortsId, ShortPlayEventReq req) {
+    Short shorts = shortRepository.findById(shortsId)
+        .orElseThrow(() -> new IllegalArgumentException("Short not found with id: " + shortsId));
+
+    ShortPlayEvent event = ShortPlayEvent.builder()
+        .shorts(shorts)
+        .userIdentifier(req.getUserIdentifier())
+        .watchTimeSec(req.getWatchTimeSec())
+        .createdAt(java.time.LocalDateTime.now())
+        .build();
+
+    shortPlayEventRepository.save(event);
+
+    return ShortPlayEventRes.builder()
+        .id(event.getId())
+        .shortsId(shorts.getId())
+        .userIdentifier(event.getUserIdentifier())
+        .watchTimeSec(event.getWatchTimeSec())
+        .createdAt(event.getCreatedAt())
         .build();
   }
 }
