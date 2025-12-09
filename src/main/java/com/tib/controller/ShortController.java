@@ -3,6 +3,8 @@ package com.tib.controller;
 import com.tib.dto.ShortPlayEventReq;
 import com.tib.dto.ShortPlayEventRes;
 import com.tib.dto.ShortViewsRes;
+import com.tib.dto.ShortLikeRequestDto;
+import com.tib.dto.ShortLikeResponseDto;
 import com.tib.service.ShortService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +30,15 @@ public class ShortController {
   public ResponseEntity<ShortPlayEventRes> createPlayEvent(@PathVariable Long id,
       @RequestBody ShortPlayEventReq req) {
     return ResponseEntity.ok(shortService.createPlayEvent(id, req));
+  }
+
+  @PostMapping("/{id}/likes")
+  public ResponseEntity<ShortLikeResponseDto> toggleLike(
+      @PathVariable Long id,
+      @RequestBody ShortLikeRequestDto requestDto) {
+
+    ShortLikeResponseDto response = shortService.toggleLike(id, requestDto.getUserIdentifier());
+
+    return ResponseEntity.ok(response);
   }
 }
