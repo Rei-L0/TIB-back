@@ -6,7 +6,6 @@ import com.tib.dto.AttractionDetailRes.Detail;
 import com.tib.dto.AttractionListDto;
 import com.tib.dto.AttractionSearchRes;
 import com.tib.dto.NearbyAttractionDto;
-import com.tib.dto.NearbyAttractionProjection;
 import com.tib.dto.NearbyAttractionReq;
 import com.tib.dto.NearbyAttractionRes;
 import com.tib.entity.AttractionDescription;
@@ -33,14 +32,14 @@ public class AttractionService {
 
         @Transactional(readOnly = true)
         public NearbyAttractionRes getNearbyAttractions(NearbyAttractionReq req) {
-                List<NearbyAttractionProjection> attractions = attractionRepository.findNearbyAttractions(
+                List<com.tib.dto.NearbyAttractionDto> attractions = attractionRepository.findNearbyAttractions(
                                 req.getLatitude(),
                                 req.getLongitude(),
                                 req.getRadius(),
                                 req.getContentTypeId(),
                                 req.getLimit());
                 List<Integer> contentIds = attractions.stream()
-                                .map(NearbyAttractionProjection::getContentId)
+                                .map(com.tib.dto.NearbyAttractionDto::getContentId)
                                 .toList();
 
                 Map<Integer, Long> shortsCounts = Map.of();
@@ -63,6 +62,8 @@ public class AttractionService {
                                                 .overview(p.getOverview())
                                                 .firstImage(p.getFirstImage())
                                                 .distance(p.getDistance())
+                                                .latitude(p.getLatitude())
+                                                .longitude(p.getLongitude())
                                                 .shortsCount(finalShortsCounts.getOrDefault(p.getContentId(), 0L))
                                                 .build())
                                 .toList();
@@ -122,6 +123,8 @@ public class AttractionService {
                                 .sidoName(attraction.getSido().getSidoName())
                                 .gugunName(attraction.getGugun().getGugunName())
                                 .shortsCount(shortsCount)
+                                .latitude(attraction.getLatitude())
+                                .longitude(attraction.getLongitude())
                                 .detail(detailDto)
                                 .description(descriptionDto)
                                 .build();
@@ -143,6 +146,8 @@ public class AttractionService {
                                                 .readcount(attraction.getReadcount())
                                                 .sidoName(attraction.getSido().getSidoName())
                                                 .gugunName(attraction.getGugun().getGugunName())
+                                                .latitude(attraction.getLatitude())
+                                                .longitude(attraction.getLongitude())
                                                 .build());
 
                 return AttractionSearchRes.builder()

@@ -1,5 +1,7 @@
 package com.tib.dto;
 
+import java.math.BigDecimal;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,4 +16,6 @@ public class AttractionListDto {
   private Integer readcount;
   private String sidoName;
   private String gugunName;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
 }

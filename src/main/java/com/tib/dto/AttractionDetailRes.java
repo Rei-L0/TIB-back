@@ -1,5 +1,6 @@
 package com.tib.dto;
 
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,6 +17,8 @@ public class AttractionDetailRes {
   private String sidoName;
   private String gugunName;
   private Long shortsCount;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
 
   private Detail detail;
   private Description description;

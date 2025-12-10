@@ -1,6 +1,6 @@
 package com.tib.repository;
 
-import com.tib.dto.NearbyAttractionProjection;
+import com.tib.dto.NearbyAttractionDto;
 import com.tib.entity.AttractionInfo;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,31 +13,37 @@ import org.springframework.data.repository.query.Param;
 public interface AttractionRepository extends JpaRepository<AttractionInfo, Integer> {
 
     @Query(value = """
-            SELECT
-                ai.content_id AS contentId,
-                ai.title AS title,
-                ai.first_image AS firstImage,
-                s.sido_name AS sidoName,
-                g.gugun_name AS gugunName,
-                ct.content_type_name AS contentTypeName,
-                ad.overview AS overview,
+            SELECT new com.tib.dto.NearbyAttractionDto(
+                ai.contentId,
+                ai.title,
+                s.sidoName,
+                g.gugunName,
+                ct.contentTypeName,
+                ad.overview,
+                ai.firstImage,
+                ai.latitude,
+                ai.longitude,
                 (6371 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
                 * cos(radians(ai.longitude) - radians(:longitude))
-                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000 AS distance
-            FROM attraction_info ai
-            JOIN sido s ON ai.sido_code = s.sido_code
-            JOIN gugun g ON ai.gugun_code = g.gugun_code AND ai.sido_code = g.sido_code
-            JOIN content_type ct ON ai.content_type_id = ct.content_type_id
-            LEFT JOIN attraction_description ad ON ai.content_id = ad.content_id
+                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000,
+                0L
+            )
+            FROM AttractionInfo ai
+            JOIN ai.sido s
+            JOIN ai.gugun g
+            JOIN ai.contentType ct
+            LEFT JOIN ai.attractionDescription ad
             WHERE
-                (:contentTypeId IS NULL OR ai.content_type_id = :contentTypeId)
+                (:contentTypeId IS NULL OR ai.contentType.contentTypeId = :contentTypeId)
                 AND (6371 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
                 * cos(radians(ai.longitude) - radians(:longitude))
                 + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000 <= :radius
-            ORDER BY distance ASC
+            ORDER BY (6371 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
+                * cos(radians(ai.longitude) - radians(:longitude))
+                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000 ASC
             LIMIT :limit
-            """, nativeQuery = true)
-    List<NearbyAttractionProjection> findNearbyAttractions(
+            """)
+    List<NearbyAttractionDto> findNearbyAttractions(
             @Param("latitude") BigDecimal latitude,
             @Param("longitude") BigDecimal longitude,
             @Param("radius") double radius,

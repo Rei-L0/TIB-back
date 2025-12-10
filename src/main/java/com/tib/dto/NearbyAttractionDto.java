@@ -1,5 +1,7 @@
 package com.tib.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,8 @@ public class NearbyAttractionDto {
   private String contentTypeName;
   private String overview;
   private String firstImage;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
   private Double distance;
   private Long shortsCount;
 }
