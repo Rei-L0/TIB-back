@@ -21,7 +21,7 @@ public class ShortsListReq {
 
   // Pagination
   @Builder.Default
-  private int page = 1;
+  private int page = 0;
   @Builder.Default
   private int size = 20;
 
@@ -33,4 +33,8 @@ public class ShortsListReq {
 
   // User
   private String userIdentifier;
+
+  private Double latitude;
+  private Double longitude;
+  private Double radius;  // 미터 단위
 }

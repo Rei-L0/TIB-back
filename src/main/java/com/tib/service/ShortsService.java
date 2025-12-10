@@ -36,38 +36,38 @@ public class ShortsService {
   @Transactional
   public ShortsViewsRes increaseViewCount(Long id) {
     Shorts shorts = shortsRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Shorts not found with id: " + id));
+            .orElseThrow(() -> new IllegalArgumentException("Shorts not found with id: " + id));
 
     shorts.increaseReadCount();
     shortsRepository.save(shorts);
 
     return ShortsViewsRes.builder()
-        .id(shorts.getId())
-        .readcount(shorts.getReadcount())
-        .build();
+            .id(shorts.getId())
+            .readcount(shorts.getReadcount())
+            .build();
   }
 
   @Transactional
   public ShortsPlayEventRes createPlayEvent(Long shortsId, ShortsPlayEventReq req) {
     Shorts shorts = shortsRepository.findById(shortsId)
-        .orElseThrow(() -> new IllegalArgumentException("Shorts not found with id: " + shortsId));
+            .orElseThrow(() -> new IllegalArgumentException("Shorts not found with id: " + shortsId));
 
     ShortsPlayEvent event = ShortsPlayEvent.builder()
-        .shorts(shorts)
-        .userIdentifier(req.getUserIdentifier())
-        .watchTimeSec(req.getWatchTimeSec())
-        .createdAt(java.time.LocalDateTime.now())
-        .build();
+            .shorts(shorts)
+            .userIdentifier(req.getUserIdentifier())
+            .watchTimeSec(req.getWatchTimeSec())
+            .createdAt(java.time.LocalDateTime.now())
+            .build();
 
     shortsPlayEventRepository.save(event);
 
     return ShortsPlayEventRes.builder()
-        .id(event.getId())
-        .shortsId(shorts.getId())
-        .userIdentifier(event.getUserIdentifier())
-        .watchTimeSec(event.getWatchTimeSec())
-        .createdAt(event.getCreatedAt())
-        .build();
+            .id(event.getId())
+            .shortsId(shorts.getId())
+            .userIdentifier(event.getUserIdentifier())
+            .watchTimeSec(event.getWatchTimeSec())
+            .createdAt(event.getCreatedAt())
+            .build();
   }
 
   @Transactional
@@ -76,7 +76,7 @@ public class ShortsService {
     boolean isLiked = shortsLikeRepository.existsByShortsIdAndUserIdentifier(shortsId, userIdentifier);
 
     Integer currentGoodCount = shortsRepository.findGoodCountById(shortsId)
-        .orElseThrow(() -> new IllegalArgumentException("Shorts not found: " + shortsId));
+            .orElseThrow(() -> new IllegalArgumentException("Shorts not found: " + shortsId));
 
     // [취소 로직]
     if (isLiked) {
@@ -92,9 +92,9 @@ public class ShortsService {
       Shorts shortsRef = shortsRepository.getReferenceById(shortsId);
 
       ShortsLike newLike = ShortsLike.builder()
-          .shorts(shortsRef)
-          .userIdentifier(userIdentifier)
-          .build();
+              .shorts(shortsRef)
+              .userIdentifier(userIdentifier)
+              .build();
 
       shortsLikeRepository.save(newLike);
 
@@ -107,16 +107,16 @@ public class ShortsService {
   @Transactional(readOnly = true)
   public ShortsListRes getShortsList(ShortsListReq req) {
     PageRequest pageable = PageRequest.of(
-        req.getPage() - 1,
-        req.getSize());
+            req.getPage(),  // -1 제거
+            req.getSize());
 
     Sort sort = Sort.unsorted();
     if (req.getSort() != null) {
       Sort.Direction direction = "asc".equalsIgnoreCase(req.getOrder())
-          ? Sort.Direction.ASC
-          : Sort.Direction.DESC;
+              ? Sort.Direction.ASC
+              : Sort.Direction.DESC;
 
-      String property = "id";
+      String property = "createdAt";
       switch (req.getSort()) {
         case "readcount":
           property = "readcount";
@@ -128,10 +128,10 @@ public class ShortsService {
           property = "createdAt";
           break;
         default:
-          property = "id";
+          property = "createdAt";
       }
       sort = Sort.by(direction, property);
-      pageable = PageRequest.of(req.getPage() - 1, req.getSize(), sort);
+      pageable = PageRequest.of(req.getPage(), req.getSize(), sort);
     }
 
     Page<Shorts> page = shortsRepository.findShorts(req, pageable);
@@ -143,22 +143,22 @@ public class ShortsService {
     }
 
     List<ShortsDto> dtos = page.getContent().stream().map(s -> ShortsDto.builder()
-        .id(s.getId())
-        .title(s.getTitle())
-        .thumbnailUrl(s.getThumbnailUrl())
-        .good(s.getGood())
-        .readcount(s.getReadcount())
-        .liked(likedShortsIds.contains(s.getId()))
-        .createdAt(s.getCreatedAt())
-        .build())
-        .toList();
+                    .id(s.getId())
+                    .title(s.getTitle())
+                    .thumbnailUrl(s.getThumbnailUrl())
+                    .good(s.getGood())
+                    .readcount(s.getReadcount())
+                    .liked(likedShortsIds.contains(s.getId()))
+                    .createdAt(s.getCreatedAt())
+                    .build())
+            .toList();
 
     return ShortsListRes.builder()
-        .content(dtos)
-        .page(page.getNumber() + 1)
-        .size(page.getSize())
-        .totalElements(page.getTotalElements())
-        .totalPages(page.getTotalPages())
-        .build();
+            .content(dtos)
+            .page(page.getNumber())  // +1 제거
+            .size(page.getSize())
+            .totalElements(page.getTotalElements())
+            .totalPages(page.getTotalPages())
+            .build();
   }
 }
