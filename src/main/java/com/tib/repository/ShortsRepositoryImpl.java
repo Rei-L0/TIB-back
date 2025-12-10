@@ -25,7 +25,6 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
   public Page<Shorts> findShorts(ShortsListReq req, Pageable pageable) {
     CriteriaBuilder cb = em.getCriteriaBuilder();
 
-    // 1. Fetch Result List
     CriteriaQuery<Shorts> cq = cb.createQuery(Shorts.class);
     Root<Shorts> shorts = cq.from(Shorts.class);
 

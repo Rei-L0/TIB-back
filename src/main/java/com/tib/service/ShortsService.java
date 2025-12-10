@@ -110,16 +110,13 @@ public class ShortsService {
         req.getPage() - 1,
         req.getSize());
 
-    // Sort construction
     Sort sort = Sort.unsorted();
-    // RepositoryImpl handles raw sorting if pageable is unsorted.
-    // However, to be cleaner, we can construct Sort here.
     if (req.getSort() != null) {
       Sort.Direction direction = "asc".equalsIgnoreCase(req.getOrder())
           ? Sort.Direction.ASC
           : Sort.Direction.DESC;
 
-      String property = "id"; // default
+      String property = "id";
       switch (req.getSort()) {
         case "readcount":
           property = "readcount";

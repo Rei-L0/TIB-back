@@ -5,9 +5,12 @@ import com.tib.dto.ShortsPlayEventRes;
 import com.tib.dto.ShortsViewsRes;
 import com.tib.dto.ShortsLikeRequestDto;
 import com.tib.dto.ShortsLikeResponseDto;
+import com.tib.dto.ShortsListReq;
+import com.tib.dto.ShortsListRes;
 import com.tib.service.ShortsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +24,8 @@ public class ShortsController {
 
   private final ShortsService shortService;
 
-  @org.springframework.web.bind.annotation.GetMapping
-  public ResponseEntity<com.tib.dto.ShortsListRes> getShortsList(com.tib.dto.ShortsListReq req) {
+  @GetMapping
+  public ResponseEntity<ShortsListRes> getShortsList(ShortsListReq req) {
     return ResponseEntity.ok(shortService.getShortsList(req));
   }
 
