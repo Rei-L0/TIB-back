@@ -19,13 +19,13 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
-@Table(name = "shorts_play_event")
+@Table(name = "shorts_like")
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-public class ShortPlayEvent {
+public class ShortsLike {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +33,10 @@ public class ShortPlayEvent {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "shorts_id", nullable = false)
-  private Short shorts;
+  private Shorts shorts;
 
   @Column(name = "user_identifier", length = 255)
   private String userIdentifier;
-
-  @Column(name = "watch_time_sec")
-  private Integer watchTimeSec;
 
   @Column(name = "created_at", nullable = false)
   @ColumnDefault("CURRENT_TIMESTAMP")

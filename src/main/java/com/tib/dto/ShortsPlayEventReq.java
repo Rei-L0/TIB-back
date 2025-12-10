@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShortPlayEventReq {
+public class ShortsPlayEventReq {
   private String userIdentifier;
   private Integer watchTimeSec;
 }

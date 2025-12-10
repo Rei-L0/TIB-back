@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ShortHashtag {
+public class ShortsHashtag {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class ShortHashtag {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "shorts_id", nullable = false)
-  private Short shorts;
+  private Shorts shorts;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "hashtag_id", nullable = false)

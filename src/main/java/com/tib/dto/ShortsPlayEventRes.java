@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShortPlayEventRes {
+public class ShortsPlayEventRes {
   private Long id;
   private Long shortsId;
   private String userIdentifier;

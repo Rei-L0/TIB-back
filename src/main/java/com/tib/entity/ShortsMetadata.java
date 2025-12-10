@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ShortMetadata {
+public class ShortsMetadata {
 
   @Id
   @Column(name = "shorts_id")
@@ -30,7 +30,7 @@ public class ShortMetadata {
   @OneToOne(fetch = FetchType.LAZY)
   @MapsId
   @JoinColumn(name = "shorts_id")
-  private Short shorts;
+  private Shorts shorts;
 
   @Column(length = 10)
   private String weather;

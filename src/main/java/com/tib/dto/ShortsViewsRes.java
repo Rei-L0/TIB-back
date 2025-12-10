@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ShortViewsRes {
+public class ShortsViewsRes {
 
   private Long id;
   private Integer readcount;
