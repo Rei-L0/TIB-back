@@ -1,0 +1,17 @@
+meta {
+  name: 주변 관광지 조회
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/attractions/nearby?latitude=35.158698&longitude=129.160384&radius=2000
+  body: none
+  auth: inherit
+}
+
+params:query {
+  latitude: 35.158698
+  longitude: 129.160384
+  radius: 2000
+}

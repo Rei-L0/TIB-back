@@ -1,0 +1,18 @@
+meta {
+  name: 쇼츠 재생 이벤트 기록
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/shorts/1/play-events
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userIdentifier": "test_user_001",
+    "watchTimeSec": 30
+  }
+}
