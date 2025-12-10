@@ -21,4 +21,10 @@ public class AttractionController {
   public ResponseEntity<NearbyAttractionRes> getNearbyAttractions(@ModelAttribute NearbyAttractionReq req) {
     return ResponseEntity.ok(attractionService.getNearbyAttractions(req));
   }
+
+  @GetMapping("/{contentId}")
+  public ResponseEntity<com.tib.dto.AttractionDetailRes> getAttractionDetail(
+      @org.springframework.web.bind.annotation.PathVariable Integer contentId) {
+    return ResponseEntity.ok(attractionService.getAttractionDetail(contentId));
+  }
 }
