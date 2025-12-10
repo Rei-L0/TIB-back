@@ -3,7 +3,6 @@ package com.tib.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.tib.dto.AttractionSearchRes;
-import com.tib.dto.NearbyAttractionDto;
 import com.tib.dto.NearbyAttractionReq;
 
 import org.junit.jupiter.api.DisplayName;

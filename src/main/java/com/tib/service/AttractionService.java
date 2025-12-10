@@ -32,14 +32,24 @@ public class AttractionService {
 
         @Transactional(readOnly = true)
         public NearbyAttractionRes getNearbyAttractions(NearbyAttractionReq req) {
-                List<com.tib.dto.NearbyAttractionDto> attractions = attractionRepository.findNearbyAttractions(
+                if (req == null) {
+                        throw new IllegalArgumentException("Request parameter cannot be null");
+                }
+                if (req.getLatitude() == null || req.getLongitude() == null) {
+                        throw new IllegalArgumentException("Latitude and Longitude cannot be null");
+                }
+
+                double radius = req.getRadius() != null ? req.getRadius() : 2000.0;
+                int limit = req.getLimit() != null ? req.getLimit() : 10;
+
+                List<NearbyAttractionDto> attractions = attractionRepository.findNearbyAttractions(
                                 req.getLatitude(),
                                 req.getLongitude(),
-                                req.getRadius(),
+                                radius,
                                 req.getContentTypeId(),
-                                req.getLimit());
+                                limit);
                 List<Integer> contentIds = attractions.stream()
-                                .map(com.tib.dto.NearbyAttractionDto::getContentId)
+                                .map(NearbyAttractionDto::getContentId)
                                 .toList();
 
                 Map<Integer, Long> shortsCounts = Map.of();
