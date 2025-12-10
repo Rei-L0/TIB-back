@@ -1,7 +1,7 @@
 package com.tib.repository;
 
 import com.tib.entity.Shorts;
-
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +23,7 @@ public interface ShortsRepository extends JpaRepository<Shorts, Long>, ShortsRep
   @Modifying(clearAutomatically = true)
   @Query("UPDATE Shorts s SET s.good = s.good - 1 WHERE s.id = :id AND s.good > 0")
   void decrementGoodCount(@Param("id") Long id);
+
+  @Query("SELECT s.attractionInfo.contentId, COUNT(s) FROM Shorts s WHERE s.attractionInfo.contentId IN :contentIds GROUP BY s.attractionInfo.contentId")
+  List<Object[]> countByAttractionContentIds(@Param("contentIds") List<Integer> contentIds);
 }
