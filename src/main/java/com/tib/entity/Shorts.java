@@ -25,8 +25,8 @@ import org.hibernate.annotations.DynamicInsert;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicInsert // Keep DynamicInsert for default values
-public class Short {
+@DynamicInsert
+public class Shorts {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

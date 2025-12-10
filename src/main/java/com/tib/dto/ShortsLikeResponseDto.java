@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class ShortLikeResponseDto {
+public class ShortsLikeResponseDto {
   private Long shortsId;
   private boolean liked;
   private long goodCount;

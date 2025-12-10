@@ -1,11 +1,11 @@
 package com.tib.controller;
 
-import com.tib.dto.ShortPlayEventReq;
-import com.tib.dto.ShortPlayEventRes;
-import com.tib.dto.ShortViewsRes;
-import com.tib.dto.ShortLikeRequestDto;
-import com.tib.dto.ShortLikeResponseDto;
-import com.tib.service.ShortService;
+import com.tib.dto.ShortsPlayEventReq;
+import com.tib.dto.ShortsPlayEventRes;
+import com.tib.dto.ShortsViewsRes;
+import com.tib.dto.ShortsLikeRequestDto;
+import com.tib.dto.ShortsLikeResponseDto;
+import com.tib.service.ShortsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,27 +17,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/shorts")
 @RequiredArgsConstructor
-public class ShortController {
+public class ShortsController {
 
-  private final ShortService shortService;
+  private final ShortsService shortService;
 
   @PostMapping("/{id}/views")
-  public ResponseEntity<ShortViewsRes> increaseViewCount(@PathVariable Long id) {
+  public ResponseEntity<ShortsViewsRes> increaseViewCount(@PathVariable Long id) {
     return ResponseEntity.ok(shortService.increaseViewCount(id));
   }
 
   @PostMapping("/{id}/play-events")
-  public ResponseEntity<ShortPlayEventRes> createPlayEvent(@PathVariable Long id,
-      @RequestBody ShortPlayEventReq req) {
+  public ResponseEntity<ShortsPlayEventRes> createPlayEvent(@PathVariable Long id,
+      @RequestBody ShortsPlayEventReq req) {
     return ResponseEntity.ok(shortService.createPlayEvent(id, req));
   }
 
   @PostMapping("/{id}/likes")
-  public ResponseEntity<ShortLikeResponseDto> toggleLike(
+  public ResponseEntity<ShortsLikeResponseDto> toggleLike(
       @PathVariable Long id,
-      @RequestBody ShortLikeRequestDto requestDto) {
+      @RequestBody ShortsLikeRequestDto requestDto) {
 
-    ShortLikeResponseDto response = shortService.toggleLike(id, requestDto.getUserIdentifier());
+    ShortsLikeResponseDto response = shortService.toggleLike(id, requestDto.getUserIdentifier());
 
     return ResponseEntity.ok(response);
   }

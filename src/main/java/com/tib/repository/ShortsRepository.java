@@ -1,6 +1,6 @@
 package com.tib.repository;
 
-import com.tib.entity.Short;
+import com.tib.entity.Shorts;
 
 import java.util.Optional;
 
@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ShortRepository extends JpaRepository<Short, Long> {
+public interface ShortsRepository extends JpaRepository<Shorts, Long> {
 
-  @Query("SELECT s.good FROM Short s WHERE s.id = :id")
+  @Query("SELECT s.good FROM Shorts s WHERE s.id = :id")
   Optional<Integer> findGoodCountById(@Param("id") Long id);
 
   // 좋아요 수 증가
