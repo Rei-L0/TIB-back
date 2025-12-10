@@ -3,9 +3,7 @@ package com.tib.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.tib.dto.ShortsLikeResponseDto;
-import com.tib.entity.Shorts;
 import com.tib.repository.ShortsLikeRepository;
-import com.tib.repository.ShortsRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +16,6 @@ class ShortsLikeServiceTest {
 
   @Autowired
   private ShortsService shortsService;
-
-  @Autowired
-  private ShortsRepository shortsRepository;
 
   @Autowired
   private ShortsLikeRepository shortsLikeRepository;
