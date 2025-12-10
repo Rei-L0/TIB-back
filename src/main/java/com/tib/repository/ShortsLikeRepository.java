@@ -1,14 +1,20 @@
 package com.tib.repository;
 
 import com.tib.entity.ShortsLike;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ShortsLikeRepository extends JpaRepository<ShortsLike, Long> {
-  Optional<ShortsLike> findByShortsIdAndUserIdentifier(Long shortsId, String userIdentifier);
 
+  // Check if a user likes a specific short
   boolean existsByShortsIdAndUserIdentifier(Long shortsId, String userIdentifier);
 
-  boolean deleteByShortsIdAndUserIdentifier(Long shortsId, String userIdentifier);
+  // Delete like
+  void deleteByShortsIdAndUserIdentifier(Long shortsId, String userIdentifier);
+
+  @Query("SELECT sl.shorts.id FROM ShortsLike sl WHERE sl.userIdentifier = :userIdentifier AND sl.shorts.id IN :shortsIds")
+  List<Long> findLikedShortsIds(@Param("userIdentifier") String userIdentifier,
+      @Param("shortsIds") List<Long> shortsIds);
 }

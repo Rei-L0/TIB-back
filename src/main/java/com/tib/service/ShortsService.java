@@ -1,6 +1,7 @@
 package com.tib.service;
 
 import com.tib.dto.ShortsLikeResponseDto;
+import com.tib.dto.ShortsListReq;
 import com.tib.dto.ShortsPlayEventReq;
 import com.tib.dto.ShortsPlayEventRes;
 import com.tib.dto.ShortsViewsRes;
@@ -10,7 +11,17 @@ import com.tib.entity.ShortsPlayEvent;
 import com.tib.repository.ShortsLikeRepository;
 import com.tib.repository.ShortsPlayEventRepository;
 import com.tib.repository.ShortsRepository;
+
 import lombok.RequiredArgsConstructor;
+
+import com.tib.dto.ShortsDto;
+import com.tib.dto.ShortsListRes;
+
+import java.util.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,5 +102,66 @@ public class ShortsService {
 
       return new ShortsLikeResponseDto(shortsId, true, currentGoodCount + 1);
     }
+  }
+
+  @Transactional(readOnly = true)
+  public ShortsListRes getShortsList(ShortsListReq req) {
+    PageRequest pageable = PageRequest.of(
+        req.getPage() - 1,
+        req.getSize());
+
+    // Sort construction
+    Sort sort = Sort.unsorted();
+    // RepositoryImpl handles raw sorting if pageable is unsorted.
+    // However, to be cleaner, we can construct Sort here.
+    if (req.getSort() != null) {
+      Sort.Direction direction = "asc".equalsIgnoreCase(req.getOrder())
+          ? Sort.Direction.ASC
+          : Sort.Direction.DESC;
+
+      String property = "id"; // default
+      switch (req.getSort()) {
+        case "readcount":
+          property = "readcount";
+          break;
+        case "good":
+          property = "good";
+          break;
+        case "createdAt":
+          property = "createdAt";
+          break;
+        default:
+          property = "id";
+      }
+      sort = Sort.by(direction, property);
+      pageable = PageRequest.of(req.getPage() - 1, req.getSize(), sort);
+    }
+
+    Page<Shorts> page = shortsRepository.findShorts(req, pageable);
+
+    Set<Long> likedShortsIds = new HashSet<>();
+    if (req.getUserIdentifier() != null && !page.isEmpty()) {
+      List<Long> shortsIds = page.getContent().stream().map(Shorts::getId).toList();
+      likedShortsIds.addAll(shortsLikeRepository.findLikedShortsIds(req.getUserIdentifier(), shortsIds));
+    }
+
+    List<ShortsDto> dtos = page.getContent().stream().map(s -> ShortsDto.builder()
+        .id(s.getId())
+        .title(s.getTitle())
+        .thumbnailUrl(s.getThumbnailUrl())
+        .good(s.getGood())
+        .readcount(s.getReadcount())
+        .liked(likedShortsIds.contains(s.getId()))
+        .createdAt(s.getCreatedAt())
+        .build())
+        .toList();
+
+    return ShortsListRes.builder()
+        .content(dtos)
+        .page(page.getNumber() + 1)
+        .size(page.getSize())
+        .totalElements(page.getTotalElements())
+        .totalPages(page.getTotalPages())
+        .build();
   }
 }

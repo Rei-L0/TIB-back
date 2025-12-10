@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ShortsRepository extends JpaRepository<Shorts, Long> {
+public interface ShortsRepository extends JpaRepository<Shorts, Long>, ShortsRepositoryCustom {
 
   @Query("SELECT s.good FROM Shorts s WHERE s.id = :id")
   Optional<Integer> findGoodCountById(@Param("id") Long id);

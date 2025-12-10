@@ -21,6 +21,11 @@ public class ShortsController {
 
   private final ShortsService shortService;
 
+  @org.springframework.web.bind.annotation.GetMapping
+  public ResponseEntity<com.tib.dto.ShortsListRes> getShortsList(com.tib.dto.ShortsListReq req) {
+    return ResponseEntity.ok(shortService.getShortsList(req));
+  }
+
   @PostMapping("/{id}/views")
   public ResponseEntity<ShortsViewsRes> increaseViewCount(@PathVariable Long id) {
     return ResponseEntity.ok(shortService.increaseViewCount(id));
