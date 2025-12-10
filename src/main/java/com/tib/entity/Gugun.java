@@ -1,12 +1,12 @@
 package com.tib.entity;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,14 +21,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Gugun {
 
-  @Id
-  @Column(name = "gugun_code")
-  private Integer gugunCode;
+  @EmbeddedId
+  private GugunId id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "sido_code", nullable = false)
+  @JoinColumn(name = "sido_code", insertable = false, updatable = false)
   private Sido sido;
 
   @Column(name = "gugun_name", length = 30)
   private String gugunName;
+
+  public Integer getGugunCode() {
+    return id.getGugunCode();
+  }
+
+  public Integer getSidoCode() {
+    return id.getSidoCode();
+  }
 }

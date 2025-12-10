@@ -1,14 +1,6 @@
 package com.tib.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,12 +25,21 @@ public class AttractionInfo {
   private ContentType contentType;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "gugun_code", nullable = false)
+  @JoinColumns({
+          @JoinColumn(name = "gugun_code", referencedColumnName = "gugun_code", insertable = false, updatable = false),
+          @JoinColumn(name = "sido_code", referencedColumnName = "sido_code", insertable = false, updatable = false)
+  })
   private Gugun gugun;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "sido_code", nullable = false)
+  @JoinColumn(name = "sido_code", insertable = false, updatable = false)
   private Sido sido;
+
+  @Column(name = "gugun_code")
+  private Integer gugunCode;
+
+  @Column(name = "sido_code")
+  private Integer sidoCode;
 
   @Column(length = 100)
   private String title;
