@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -35,8 +34,7 @@ public class AttractionDescription {
   @Column(length = 100)
   private String homepage;
 
-  @Lob
-  @Column(length = 10000)
+  @Column(columnDefinition = "TEXT")
   private String overview;
 
   @Column(length = 45)

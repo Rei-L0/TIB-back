@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -41,4 +42,11 @@ public class ShortsLike {
   @Column(name = "created_at", nullable = false)
   @ColumnDefault("CURRENT_TIMESTAMP")
   private LocalDateTime createdAt;
+
+  @PrePersist
+  public void prePersist() {
+    if (this.createdAt == null) {
+      this.createdAt = LocalDateTime.now();
+    }
+  }
 }
