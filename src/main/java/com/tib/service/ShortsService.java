@@ -200,7 +200,7 @@ public class ShortsService {
   @Transactional(readOnly = true)
   public ShortsListRes getShortsList(ShortsListReq req) {
     PageRequest pageable = PageRequest.of(
-        req.getPage(), // -1 제거
+        req.getPage(),
         req.getSize());
 
     Sort sort = Sort.unsorted();
@@ -244,6 +244,9 @@ public class ShortsService {
         .readcount(s.getReadcount())
         .liked(likedShortsIds.contains(s.getId()))
         .createdAt(s.getCreatedAt())
+        .latitude(s.getLatitude())
+        .longitude(s.getLongitude())
+        .radius(req.getRadius())
         .build())
         .toList();
 

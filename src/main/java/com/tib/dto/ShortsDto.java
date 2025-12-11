@@ -1,5 +1,6 @@
 package com.tib.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +16,7 @@ public class ShortsDto {
   private Integer readcount;
   private Boolean liked;
   private LocalDateTime createdAt;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
+  private Double radius;
 }
