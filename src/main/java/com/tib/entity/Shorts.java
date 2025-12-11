@@ -45,9 +45,6 @@ public class Shorts {
   @ColumnDefault("CURRENT_TIMESTAMP")
   private LocalDateTime createdAt;
 
-  @Column(name = "recorded_at")
-  private LocalDateTime recordedAt;
-
   @Column(precision = 20, scale = 17)
   private BigDecimal latitude;
 
