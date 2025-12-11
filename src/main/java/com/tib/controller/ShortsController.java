@@ -1,21 +1,10 @@
 package com.tib.controller;
 
-import com.tib.dto.ShortsPlayEventReq;
-import com.tib.dto.ShortsPlayEventRes;
-import com.tib.dto.ShortsViewsRes;
-import com.tib.dto.ShortsLikeRequestDto;
-import com.tib.dto.ShortsLikeResponseDto;
-import com.tib.dto.ShortsListReq;
-import com.tib.dto.ShortsListRes;
+import com.tib.dto.*;
 import com.tib.service.ShortsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/shorts")
@@ -48,5 +37,12 @@ public class ShortsController {
     ShortsLikeResponseDto response = shortService.toggleLike(id, requestDto.getUserIdentifier());
 
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ShortsDetailDto> getShortsDetail(
+          @PathVariable Long id,
+          @RequestParam(required = false) String userIdentifier) {
+    return ResponseEntity.ok(shortService.getShortsDetail(id, userIdentifier));
   }
 }

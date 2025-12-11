@@ -1,10 +1,6 @@
 package com.tib.service;
 
-import com.tib.dto.ShortsLikeResponseDto;
-import com.tib.dto.ShortsListReq;
-import com.tib.dto.ShortsPlayEventReq;
-import com.tib.dto.ShortsPlayEventRes;
-import com.tib.dto.ShortsViewsRes;
+import com.tib.dto.*;
 import com.tib.entity.Shorts;
 import com.tib.entity.ShortsLike;
 import com.tib.entity.ShortsPlayEvent;
@@ -13,9 +9,6 @@ import com.tib.repository.ShortsPlayEventRepository;
 import com.tib.repository.ShortsRepository;
 
 import lombok.RequiredArgsConstructor;
-
-import com.tib.dto.ShortsDto;
-import com.tib.dto.ShortsListRes;
 
 import java.util.*;
 
@@ -160,6 +153,34 @@ public class ShortsService {
             .size(page.getSize())
             .totalElements(page.getTotalElements())
             .totalPages(page.getTotalPages())
+            .build();
+  }
+
+  @Transactional(readOnly = true)
+  public ShortsDetailDto getShortsDetail(Long id, String userIdentifier) {
+    Shorts shorts = shortsRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Shorts not found: " + id));
+
+    boolean liked = false;
+    if (userIdentifier != null) {
+      liked = shortsLikeRepository.existsByShortsIdAndUserIdentifier(id, userIdentifier);
+    }
+
+    return ShortsDetailDto.builder()
+            .id(shorts.getId())
+            .name(shorts.getName())
+            .title(shorts.getTitle())
+            .video(shorts.getVideo())
+            .thumbnailUrl(shorts.getThumbnailUrl())
+            .good(shorts.getGood())
+            .readcount(shorts.getReadcount())
+            .liked(liked)
+            .createdAt(shorts.getCreatedAt())
+            .recordedAt(shorts.getRecordedAt())
+            .latitude(shorts.getLatitude() != null ? shorts.getLatitude().doubleValue() : null)
+            .longitude(shorts.getLongitude() != null ? shorts.getLongitude().doubleValue() : null)
+            .contentId(shorts.getAttractionInfo() != null ? shorts.getAttractionInfo().getContentId() : null)
+            .attractionTitle(shorts.getAttractionInfo() != null ? shorts.getAttractionInfo().getTitle() : null)
             .build();
   }
 }
