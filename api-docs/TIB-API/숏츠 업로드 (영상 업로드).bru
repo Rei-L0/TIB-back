@@ -1,0 +1,27 @@
+meta {
+  name: 숏츠 업로드 (영상 업로드)
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/shorts
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "videoKey": "shorts/2024/01/abc123.mp4",
+    "thumbnailKey": "thumbs/2024/01/abc123.jpg",
+    "name": "여행러버",
+    "title": "해운대 일출 브이로그",
+    "contentId": 2001,
+    "weather": "SUNNY",
+    "theme": "OCEAN",
+    "season": "SUMMER",
+    "latitude": 35.1586,
+    "longitude": 129.1605,
+    "hashtags": ["해운대", "일출", "부산여행"]
+  }
+}

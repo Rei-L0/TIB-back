@@ -50,4 +50,9 @@ public class ShortsController {
   public ResponseEntity<ShortsUploadResponse> getUploadUrl(@RequestBody ShortsUploadRequest request) {
     return ResponseEntity.ok(shortService.getPreSignedUrl(request));
   }
+
+  @PostMapping
+  public ResponseEntity<ShortsCreateResponse> createShorts(@RequestBody ShortsCreateRequest request) {
+    return ResponseEntity.ok(shortService.createShorts(request));
+  }
 }

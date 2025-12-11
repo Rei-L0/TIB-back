@@ -4,6 +4,12 @@ import com.tib.dto.*;
 import com.tib.entity.Shorts;
 import com.tib.entity.ShortsLike;
 import com.tib.entity.ShortsPlayEvent;
+import com.tib.entity.AttractionInfo;
+import com.tib.entity.Hashtag;
+import com.tib.entity.ShortsHashtag;
+import com.tib.repository.AttractionRepository;
+import com.tib.repository.HashtagRepository;
+import com.tib.repository.ShortsHashtagRepository;
 import com.tib.repository.ShortsLikeRepository;
 import com.tib.repository.ShortsPlayEventRepository;
 import com.tib.repository.ShortsRepository;
@@ -35,6 +41,10 @@ public class ShortsService {
   private final ShortsRepository shortsRepository;
   private final ShortsPlayEventRepository shortsPlayEventRepository;
   private final ShortsLikeRepository shortsLikeRepository;
+  private final AttractionRepository attractionRepository;
+  private final HashtagRepository hashtagRepository;
+  private final ShortsHashtagRepository shortsHashtagRepository;
+
   private final S3Presigner s3Presigner;
 
   @Value("${cloud.aws.s3.bucket}")
@@ -74,6 +84,46 @@ public class ShortsService {
         .build();
 
     return s3Presigner.presignPutObject(presignRequest);
+  }
+
+  @Transactional
+  public ShortsCreateResponse createShorts(ShortsCreateRequest request) {
+    AttractionInfo attractionInfo = attractionRepository.findById(request.getContentId())
+        .orElseThrow(
+            () -> new IllegalArgumentException("Attraction not found with contentId: " + request.getContentId()));
+
+    Shorts shorts = Shorts.builder()
+        .name(request.getName())
+        .title(request.getTitle())
+        .video(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, request.getVideoKey()))
+        .thumbnailUrl(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, request.getThumbnailKey()))
+        .attractionInfo(attractionInfo)
+        .latitude(request.getLatitude())
+        .longitude(request.getLongitude())
+        .createdAt(java.time.LocalDateTime.now())
+        .build();
+
+    shortsRepository.save(shorts);
+
+    if (request.getHashtags() != null) {
+      for (String tagName : request.getHashtags()) {
+        Hashtag hashtag = hashtagRepository.findByName(tagName)
+            .orElseGet(() -> hashtagRepository.save(Hashtag.builder().name(tagName).build()));
+
+        ShortsHashtag shortsHashtag = ShortsHashtag.builder()
+            .shorts(shorts)
+            .hashtag(hashtag)
+            .build();
+        shortsHashtagRepository.save(shortsHashtag);
+      }
+    }
+
+    return ShortsCreateResponse.builder()
+        .id(shorts.getId())
+        .title(shorts.getTitle())
+        .status(shorts.getStatus())
+        .createdAt(shorts.getCreatedAt())
+        .build();
   }
 
   @Transactional
