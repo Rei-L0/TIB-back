@@ -40,7 +40,7 @@ public class AttractionService {
                 }
 
                 double radius = req.getRadius() != null ? req.getRadius() : 2000.0;
-                int limit = req.getLimit() != null ? req.getLimit() : 10;
+                int limit = req.getLimit() != null ? req.getLimit() : 1000;
 
                 List<NearbyAttractionDto> attractions = attractionRepository.findNearbyAttractions(
                                 req.getLatitude(),
