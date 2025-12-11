@@ -146,6 +146,7 @@ public class ShortsService {
                     .id(s.getId())
                     .title(s.getTitle())
                     .thumbnailUrl(s.getThumbnailUrl())
+                    .video(s.getVideo())
                     .good(s.getGood())
                     .readcount(s.getReadcount())
                     .liked(likedShortsIds.contains(s.getId()))
