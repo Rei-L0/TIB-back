@@ -1,0 +1,22 @@
+meta {
+  name: 영상 업로드 URL 발급
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/shorts/upload-url
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "videoFileName": "video.mp4",
+    "videoContentType": "video/mp4",
+    "videoFileSize": 52428800,
+    "thumbnailFileName": "thumb.jpg",
+    "thumbnailContentType": "image/jpeg",
+    "thumbnailFileSize": 102400
+  }
+}

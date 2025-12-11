@@ -41,8 +41,13 @@ public class ShortsController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ShortsDetailDto> getShortsDetail(
-          @PathVariable Long id,
-          @RequestParam(required = false) String userIdentifier) {
+      @PathVariable Long id,
+      @RequestParam(required = false) String userIdentifier) {
     return ResponseEntity.ok(shortService.getShortsDetail(id, userIdentifier));
+  }
+
+  @PostMapping("/upload-url")
+  public ResponseEntity<ShortsUploadResponse> getUploadUrl(@RequestBody ShortsUploadRequest request) {
+    return ResponseEntity.ok(shortService.getPreSignedUrl(request));
   }
 }
