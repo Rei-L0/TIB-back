@@ -25,12 +25,21 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
   public Page<Shorts> findShorts(ShortsListReq req, Pageable pageable) {
     CriteriaBuilder cb = em.getCriteriaBuilder();
 
+    // 1. 메인 쿼리 (데이터 조회)
     CriteriaQuery<Shorts> cq = cb.createQuery(Shorts.class);
     Root<Shorts> shorts = cq.from(Shorts.class);
 
+    // [핵심 해결책] 여기서 미리 Fetch Join을 걸어줍니다. (N+1 방지)
+    // 리스트 조회 시 무조건 메타데이터를 함께 가져옵니다.
+    if (Shorts.class.equals(cq.getResultType())) {
+      shorts.fetch("shortsMetadata", JoinType.LEFT);
+    }
+
+    // Predicate 생성 (필터링)
     List<Predicate> predicates = buildPredicates(cb, cq, shorts, req);
     cq.where(predicates.toArray(new Predicate[0]));
 
+    // 정렬 로직
     if (pageable.getSort().isSorted()) {
       List<Order> orders = new ArrayList<>();
       pageable.getSort().forEach(order -> {
@@ -59,9 +68,12 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
     query.setMaxResults(pageable.getPageSize());
     List<Shorts> content = query.getResultList();
 
+    // 2. 카운트 쿼리 (개수 조회)
     CriteriaQuery<Long> countQ = cb.createQuery(Long.class);
     Root<Shorts> countRoot = countQ.from(Shorts.class);
     countQ.select(cb.count(countRoot));
+
+    // 카운트 쿼리용 Predicate 생성 (여기서는 Fetch Join이 적용되지 않음)
     List<Predicate> countPredicates = buildPredicates(cb, countQ, countRoot, req);
     countQ.where(countPredicates.toArray(new Predicate[0]));
 
@@ -142,27 +154,36 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
       }
     }
 
-    // 메타데이터 필터 (날씨, 테마, 계절)
+    // 메타데이터 필터 (날씨, 테마, 계절) - N+1 해결 연계 로직
     if (req.getWeather() != null || req.getTheme() != null || req.getSeason() != null) {
-      if (query instanceof AbstractQuery) {
-        AbstractQuery<?> aq = (AbstractQuery<?>) query;
-        Subquery<Long> sub = aq.subquery(Long.class);
-        Root<ShortsMetadata> m = sub.from(ShortsMetadata.class);
 
-        sub.select(m.get("shortsId"));
+      Join<Shorts, ShortsMetadata> metadataJoin = null;
 
-        List<Predicate> metaPreds = new ArrayList<>();
-        metaPreds.add(cb.equal(m.get("shorts"), root));
+      // 1. 이미 Fetch Join이 되어 있는지 확인 (메인 쿼리의 경우)
+      if (query instanceof CriteriaQuery && Shorts.class.equals(((CriteriaQuery<?>) query).getResultType())) {
+        for (Fetch<Shorts, ?> fetch : root.getFetches()) {
+          if ("shortsMetadata".equals(fetch.getAttribute().getName())) {
+            // Fetch 객체를 Join으로 캐스팅 (컴파일러 우회 필요)
+            metadataJoin = (Join<Shorts, ShortsMetadata>) (Object) fetch;
+            break;
+          }
+        }
+      }
 
-        if (req.getWeather() != null)
-          metaPreds.add(cb.equal(m.get("weather"), req.getWeather()));
-        if (req.getTheme() != null)
-          metaPreds.add(cb.like(m.get("theme"), "%" + req.getTheme() + "%"));
-        if (req.getSeason() != null)
-          metaPreds.add(cb.equal(m.get("season"), req.getSeason()));
+      // 2. Fetch Join이 없거나 카운트 쿼리인 경우 -> 일반 Join 생성
+      if (metadataJoin == null) {
+        metadataJoin = root.join("shortsMetadata", JoinType.LEFT);
+      }
 
-        sub.where(metaPreds.toArray(new Predicate[0]));
-        predicates.add(cb.exists(sub));
+      // 3. 조건 추가
+      if (req.getWeather() != null) {
+        predicates.add(cb.equal(metadataJoin.get("weather"), req.getWeather()));
+      }
+      if (req.getTheme() != null) {
+        predicates.add(cb.like(metadataJoin.get("theme"), "%" + req.getTheme() + "%"));
+      }
+      if (req.getSeason() != null) {
+        predicates.add(cb.equal(metadataJoin.get("season"), req.getSeason()));
       }
     }
 
