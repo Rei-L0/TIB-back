@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,9 +56,13 @@ public class Shorts {
   @ColumnDefault("0")
   private Integer good = 0;
 
-  @Builder.Default
+  @Column(name = "readcount", nullable = false)
   @ColumnDefault("0")
+  @Builder.Default
   private Integer readcount = 0;
+
+  @OneToOne(mappedBy = "shorts", fetch = FetchType.LAZY)
+  private ShortsMetadata shortsMetadata;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "content_id")

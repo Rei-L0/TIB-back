@@ -55,4 +55,11 @@ public class ShortsController {
   public ResponseEntity<ShortsCreateResponse> createShorts(@RequestBody ShortsCreateRequest request) {
     return ResponseEntity.ok(shortService.createShorts(request));
   }
+
+  @GetMapping("/{id}/related")
+  public ResponseEntity<ShortsListRes> getRelatedShorts(
+      @PathVariable Long id,
+      @RequestParam(required = false) String userIdentifier) {
+    return ResponseEntity.ok(shortService.getRelatedShorts(id, userIdentifier));
+  }
 }

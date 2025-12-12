@@ -102,7 +102,7 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
   }
 
   private List<Predicate> buildPredicates(CriteriaBuilder cb, CommonAbstractCriteria query, Root<Shorts> root,
-                                          ShortsListReq req) {
+      ShortsListReq req) {
     List<Predicate> predicates = new ArrayList<>();
 
     // 관광지 ID 필터
@@ -111,7 +111,7 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
       predicates.add(cb.equal(attraction.get("contentId"), req.getContentId()));
     } else {
       boolean needAttraction = req.getSidoCode() != null || req.getGugunCode() != null
-              || req.getContentTypeId() != null;
+          || req.getContentTypeId() != null;
       if (needAttraction) {
         Join<Shorts, AttractionInfo> attraction = root.join("attractionInfo", JoinType.LEFT);
         if (req.getSidoCode() != null) {
@@ -136,8 +136,8 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
 
         sub.select(sh.get("shorts").get("id"));
         sub.where(
-                cb.equal(sh.get("shorts"), root),
-                cb.like(h.get("name"), "%" + req.getHashtag() + "%"));
+            cb.equal(sh.get("shorts"), root),
+            cb.like(h.get("name"), "%" + req.getHashtag() + "%"));
         predicates.add(cb.exists(sub));
       }
     }
@@ -183,5 +183,41 @@ public class ShortsRepositoryImpl implements ShortsRepositoryCustom {
     }
 
     return predicates;
+  }
+
+  @Override
+  public List<Shorts> findCandidates(Long targetId, Integer gugunCode, String theme, int limit) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Shorts> cq = cb.createQuery(Shorts.class);
+    Root<Shorts> root = cq.from(Shorts.class);
+
+    List<Predicate> predicates = new ArrayList<>();
+
+    // 1. 자기 자신 제외
+    predicates.add(cb.notEqual(root.get("id"), targetId));
+
+    // 2. OR 조건: 같은 지역 OR 같은 테마
+    List<Predicate> orPredicates = new ArrayList<>();
+
+    if (gugunCode != null) {
+      Join<Shorts, AttractionInfo> attraction = root.join("attractionInfo", JoinType.LEFT);
+      orPredicates.add(cb.equal(attraction.get("gugunCode"), gugunCode));
+    }
+
+    if (theme != null && !theme.isBlank()) {
+      Join<Shorts, ShortsMetadata> metadata = root.join("shortsMetadata", JoinType.LEFT);
+      orPredicates.add(cb.equal(metadata.get("theme"), theme));
+    }
+
+    if (!orPredicates.isEmpty()) {
+      predicates.add(cb.or(orPredicates.toArray(new Predicate[0])));
+    }
+
+    cq.where(predicates.toArray(new Predicate[0]));
+    cq.orderBy(cb.desc(root.get("createdAt")));
+
+    return em.createQuery(cq)
+        .setMaxResults(limit)
+        .getResultList();
   }
 }
