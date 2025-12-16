@@ -29,7 +29,7 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: arn:aws:iam::ACCOUNT_ID:role/github-actions-role
+        role-to-assume: arn:aws:iam::630924221255:role/tib-github-actions-dev
         aws-region: ${{ env.AWS_REGION }}
 
     # ECR 로그인
