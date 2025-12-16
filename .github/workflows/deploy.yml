@@ -40,7 +40,7 @@ jobs:
     - name: Set image tag
       run: |
         echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
-        echo "ECR_IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${GITHUB_SHA}" >> $GITHUB_ENV
+        echo "ECR_IMAGE=630924221255.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${GITHUB_SHA}" >> $GITHUB_ENV
 
     # ARM 이미지 빌드 & 푸시
     - name: Build and push ARM Docker image
