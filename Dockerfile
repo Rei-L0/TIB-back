@@ -1,11 +1,14 @@
 # Build
-FROM gradle:8.5-jdk17-alpine AS build
+FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /app
 
-# 의존성 캐시 최적화
-COPY build.gradle settings.gradle gradlew ./
+# Gradle Wrapper 사용
+COPY gradlew .
 COPY gradle gradle
+COPY build.gradle settings.gradle ./
+
+RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon
 
 # 소스 복사 & 빌드
