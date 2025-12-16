@@ -14,36 +14,43 @@ public class ShortsController {
   private final ShortsService shortService;
 
   @GetMapping
-  public ResponseEntity<ShortsListRes> getShortsList(ShortsListReq req) {
-    return ResponseEntity.ok(shortService.getShortsList(req));
+  public ResponseEntity<ShortsListRes> getShortsList(
+          ShortsListReq req,
+          @RequestHeader(value = "Accept-Language", defaultValue = "ko") String lang
+  ) {
+    String langCode = lang.split("-")[0];
+    return ResponseEntity.ok(shortService.getShortsList(req, langCode));
   }
 
   @PostMapping("/{id}/views")
-  public ResponseEntity<ShortsViewsRes> increaseViewCount(@PathVariable Long id) {
+  public ResponseEntity<ShortsViewsRes> increaseViewCount(@PathVariable("id") Long id) {
     return ResponseEntity.ok(shortService.increaseViewCount(id));
   }
 
   @PostMapping("/{id}/play-events")
-  public ResponseEntity<ShortsPlayEventRes> createPlayEvent(@PathVariable Long id,
-      @RequestBody ShortsPlayEventReq req) {
+  public ResponseEntity<ShortsPlayEventRes> createPlayEvent(
+          @PathVariable("id") Long id,
+          @RequestBody ShortsPlayEventReq req
+  ) {
     return ResponseEntity.ok(shortService.createPlayEvent(id, req));
   }
 
   @PostMapping("/{id}/likes")
   public ResponseEntity<ShortsLikeResponseDto> toggleLike(
-      @PathVariable Long id,
-      @RequestBody ShortsLikeRequestDto requestDto) {
-
-    ShortsLikeResponseDto response = shortService.toggleLike(id, requestDto.getUserIdentifier());
-
-    return ResponseEntity.ok(response);
+          @PathVariable("id") Long id,
+          @RequestBody ShortsLikeRequestDto requestDto
+  ) {
+    return ResponseEntity.ok(shortService.toggleLike(id, requestDto.getUserIdentifier()));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<ShortsDetailDto> getShortsDetail(
-      @PathVariable Long id,
-      @RequestParam(required = false) String userIdentifier) {
-    return ResponseEntity.ok(shortService.getShortsDetail(id, userIdentifier));
+          @PathVariable("id") Long id,
+          @RequestParam(value = "userIdentifier", required = false) String userIdentifier,
+          @RequestHeader(value = "Accept-Language", defaultValue = "ko") String lang
+  ) {
+    String langCode = lang.split("-")[0];
+    return ResponseEntity.ok(shortService.getShortsDetail(id, userIdentifier, langCode));
   }
 
   @PostMapping("/upload-url")
@@ -58,8 +65,11 @@ public class ShortsController {
 
   @GetMapping("/{id}/related")
   public ResponseEntity<ShortsListRes> getRelatedShorts(
-      @PathVariable Long id,
-      @RequestParam(required = false) String userIdentifier) {
-    return ResponseEntity.ok(shortService.getRelatedShorts(id, userIdentifier));
+          @PathVariable("id") Long id,
+          @RequestParam(value = "userIdentifier", required = false) String userIdentifier,
+          @RequestHeader(value = "Accept-Language", defaultValue = "ko") String lang
+  ) {
+    String langCode = lang.split("-")[0];
+    return ResponseEntity.ok(shortService.getRelatedShorts(id, userIdentifier, langCode));
   }
 }
