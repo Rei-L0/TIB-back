@@ -18,36 +18,31 @@ public interface AttractionRepository extends JpaRepository<AttractionInfo, Inte
                 ai.title,
                 s.sidoName,
                 g.gugunName,
-                ct.contentTypeName,
                 ad.overview,
                 ai.firstImage,
                 ai.latitude,
                 ai.longitude,
-                (6371 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
+                (6371.0 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
                 * cos(radians(ai.longitude) - radians(:longitude))
-                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000,
+                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000.0,
                 0L
             )
             FROM AttractionInfo ai
             JOIN ai.sido s
             JOIN ai.gugun g
-            JOIN ai.contentType ct
             LEFT JOIN ai.attractionDescription ad
-            WHERE
-                (:contentTypeId IS NULL OR ai.contentType.contentTypeId = :contentTypeId)
-                AND (6371 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
+            WHERE (6371.0 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
                 * cos(radians(ai.longitude) - radians(:longitude))
-                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000 <= :radius
-            ORDER BY (6371 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
+                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000.0 <= :radius
+            ORDER BY (6371.0 * acos(cos(radians(:latitude)) * cos(radians(ai.latitude))
                 * cos(radians(ai.longitude) - radians(:longitude))
-                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000 ASC
+                + sin(radians(:latitude)) * sin(radians(ai.latitude)))) * 1000.0 ASC
             LIMIT :limit
             """)
     List<NearbyAttractionDto> findNearbyAttractions(
             @Param("latitude") BigDecimal latitude,
             @Param("longitude") BigDecimal longitude,
             @Param("radius") double radius,
-            @Param("contentTypeId") Integer contentTypeId,
             @Param("limit") int limit);
 
     Page<AttractionInfo> findByTitleContainingOrAddr1Containing(String title, String addr1, Pageable pageable);

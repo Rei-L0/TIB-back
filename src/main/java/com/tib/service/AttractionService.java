@@ -46,7 +46,6 @@ public class AttractionService {
                                 req.getLatitude(),
                                 req.getLongitude(),
                                 radius,
-                                req.getContentTypeId(),
                                 limit);
                 List<Integer> contentIds = attractions.stream()
                                 .map(NearbyAttractionDto::getContentId)
@@ -68,7 +67,6 @@ public class AttractionService {
                                                 .title(p.getTitle())
                                                 .sidoName(p.getSidoName())
                                                 .gugunName(p.getGugunName())
-                                                .contentTypeName(p.getContentTypeName())
                                                 .overview(p.getOverview())
                                                 .firstImage(p.getFirstImage())
                                                 .distance(p.getDistance())
