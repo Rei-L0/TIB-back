@@ -11,3 +11,6 @@ weather:
 
 deepl:
   api-key: ${DEEPL_API_KEY}
+
+cdn:
+  url: ${SHORTS_CDN_URL:https://d2n4hxvymniuy1.cloudfront.net}
