@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -46,6 +47,9 @@ public class ShortsService {
     return s3Service.getPreSignedUrl(request);
   }
 
+  @Value("${cdn.url}")
+  private String cdnUrl;  // https://d2n4hxvymniuy1.cloudfront.net
+
   @Transactional
   public ShortsCreateResponse createShorts(ShortsCreateRequest request) {
     AttractionInfo attractionInfo = attractionRepository.findById(request.getContentId())
@@ -54,8 +58,8 @@ public class ShortsService {
     Shorts shorts = Shorts.builder()
             .name(request.getName())
             .title(request.getTitle())
-            .video(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", s3Service.getBucket(), request.getVideoKey()))
-            .thumbnailUrl(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", s3Service.getBucket(), request.getThumbnailKey()))
+            .video(cdnUrl + "/" + request.getVideoKey())
+            .thumbnailUrl(cdnUrl + "/" + request.getThumbnailKey())
             .attractionInfo(attractionInfo)
             .latitude(request.getLatitude())
             .longitude(request.getLongitude())
